@@ -1,6 +1,7 @@
 const std = @import("std");
 const ZecterServer = @import("./server.zig").ZecterServer;
 const print = std.debug.print;
+const Client = @import("client.zig").Client;
 
 pub fn killServer(self: *ZecterServer) !void {
     const stdout = std.io.getStdOut().writer();
@@ -38,11 +39,9 @@ pub fn msgClient(self: *ZecterServer, client: []const u8, msg: []const u8) !void
     const stream = self.streams.items[c];
 
     const result = try stream.write(payload[0..payload.len]); // catch |err| {
-        //print("Failed to write to stream! {any}\n", .{err});
+    //print("Failed to write to stream! {any}\n", .{err});
     //};
     print("Sent message to client with result: {any}\n", .{result});
-    std.Thread.sleep(1_000_000_000); // Ensure there's a small pause if needed
-
 }
 
 pub fn clearScreen() void {
@@ -53,7 +52,11 @@ pub fn listClients(self: *ZecterServer) void {
     clearScreen(); // optional
     std.debug.print("Active Clients:\n", .{});
     for (self.connections.items, 0..) |conn, idx| {
-        std.debug.print("  [{d}] Address: {any}\n", .{ idx, conn.address });
+        std.debug.print("   [{d}] Address: {any}\n", .{ idx, conn.address });
+        
+        for (self.active_users.items) |au| {
+            std.debug.print("Usernames: {s}\n", .{au});
+        }
     }
 }
 
